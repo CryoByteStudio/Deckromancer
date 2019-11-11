@@ -10,6 +10,15 @@ public class CombatManager : MonoBehaviour
     CardMaterials attacker;
     [SerializeField]
     CardMaterials defender;
+
+    public float phase_timer_fl = 5.0f;
+    public bool is_declare_horde;
+    public bool is_combat;
+    public bool is_combat_completed;
+    public bool is_attacker_win;
+    public bool is_defender_win;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,23 +48,23 @@ public class CombatManager : MonoBehaviour
 
     int DealDamage(CardMaterials.Die_Type die_Type)
     {
-        float dmg;
+        int dmg;
 
         if (die_Type is CardMaterials.Die_Type.d2)
         {
-            dmg = 2.0f;
+            dmg = 2;
         }else if(die_Type is CardMaterials.Die_Type.d4)
         {
-            dmg = 4.0f;
+            dmg = 4;
         }else if(die_Type is CardMaterials.Die_Type.d6)
         {
-            dmg = 6.0f;
+            dmg = 6;
         }
         else
         {
-            dmg = 8.0f;
+            dmg = 8;
         }
 
-        return Mathf.CeilToInt (Random.Range(0, dmg));
+        return Random.Range(1, dmg);
     }
 }
