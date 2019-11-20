@@ -7,6 +7,8 @@ public class CardMaterials : MonoBehaviour
     public Card_Type card_type;
     public Material back_mat;
     public Material front_mat;
+    public Sprite back_sprite;
+    public Sprite front_sprite;
 
     public int add_power_draw_int = 0;
     public int add_horde_draw_int = 0;

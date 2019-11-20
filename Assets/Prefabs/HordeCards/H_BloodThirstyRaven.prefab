@@ -48,9 +48,12 @@ MonoBehaviour:
   card_type: 2
   back_mat: {fileID: 2100000, guid: ac128c0789123b3459ef9670d6a2f32c, type: 2}
   front_mat: {fileID: 2100000, guid: 587a6aa6e9ba6fd4da18ec30b7425484, type: 2}
+  back_sprite: {fileID: 21300000, guid: 65fc93140d5fac64e84adc73de1fbedb, type: 3}
+  front_sprite: {fileID: 21300000, guid: d44c7f5d9f5d55e4086b4a5b73031b0a, type: 3}
   add_power_draw_int: 0
   add_horde_draw_int: 0
   health: 2
+  cur_health: 0
   die_dmg: 4
   add_dmg: 2
   sacrifice_amount: 0
