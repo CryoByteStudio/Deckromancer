@@ -59,6 +59,7 @@ MonoBehaviour:
   defender: {fileID: 0}
   p1_hand_canvas: {fileID: 0}
   p2_hand_canvas: {fileID: 0}
+  fight_canvas: {fileID: 0}
   p1_stack_mid: {fileID: 0}
   p2_stack_mid: {fileID: 0}
   p1_card_images_arr:
@@ -69,6 +70,10 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  atk_image: {fileID: 0}
+  def_image: {fileID: 0}
+  atk_health: {fileID: 0}
+  def_health: {fileID: 0}
   phase_timer_fl: 5
   is_declare_horde: 0
   is_combat: 0

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Player1
   - player2
+  - DefHealth
+  - AtkHealth
   layers:
   - Default
   - TransparentFX

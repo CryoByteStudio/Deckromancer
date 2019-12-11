@@ -8,8 +8,8 @@ using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviour
 {
-    public List <CardMaterials> p1_cards;
-    public List <CardMaterials> p2_cards;
+    public List<CardMaterials> p1_cards;
+    public List<CardMaterials> p2_cards;
     [SerializeField]
     CardMaterials attacker;
     [SerializeField]
@@ -18,6 +18,8 @@ public class CombatManager : MonoBehaviour
     Canvas p1_hand_canvas;
     [SerializeField]
     Canvas p2_hand_canvas;
+    [SerializeField]
+    Canvas fight_canvas;
 
     public Stack<CardMaterials> p1_stack_left = new Stack<CardMaterials>();
     public CardMaterials p1_stack_mid;
@@ -29,6 +31,14 @@ public class CombatManager : MonoBehaviour
     Image[] p1_card_images_arr;
     [SerializeField]
     Image[] p2_card_images_arr;
+    [SerializeField]
+    Image atk_image;
+    [SerializeField]
+    Image def_image;
+    [SerializeField]
+    Text atk_health;
+    [SerializeField]
+    Text def_health;
 
     public float phase_timer_fl = 5.0f;
     public bool is_declare_horde;
@@ -46,6 +56,7 @@ public class CombatManager : MonoBehaviour
         is_p1_turn = true;
         is_declare_horde = true;
         is_card_selected = false;
+        fight_canvas.gameObject.SetActive(false);
         for (int i = p1_cards.Count -1; i > 1; i--)
         {
             p1_stack_right.Push(p1_cards[i]);
@@ -60,8 +71,6 @@ public class CombatManager : MonoBehaviour
         p2_stack_left.Push(p2_cards[0]);
 
         //show cards on buttons
-        DisplayP1Hand();
-        DisplayP2Hand();
         Debug.Log("Select Attacker");
     }
 
@@ -70,22 +79,8 @@ public class CombatManager : MonoBehaviour
     {
         if (is_declare_horde)
         {
-            if (is_p1_turn)
-            {
-                if (!p1_hand_canvas.isActiveAndEnabled)
-                {
-                    p1_hand_canvas.gameObject.SetActive(true);
-                    p2_hand_canvas.gameObject.SetActive(false);
-                }
-            }
-            if(!is_p1_turn)
-            {
-                if (!p2_hand_canvas.isActiveAndEnabled)
-                {
-                    p2_hand_canvas.gameObject.SetActive(true);
-                    p1_hand_canvas.gameObject.SetActive(false);
-                }
-            }
+        DisplayP1Hand();
+        DisplayP2Hand();
             if (!attacker)
             {
                 if (is_p1_turn && is_card_selected)
@@ -103,6 +98,7 @@ public class CombatManager : MonoBehaviour
                     }
                     is_p1_turn = false;
                     DisplayP1Hand();
+                    DisplayP2Hand();
                 }
                 else if (!is_p1_turn && is_card_selected)
                 {
@@ -119,6 +115,7 @@ public class CombatManager : MonoBehaviour
                     }
                     is_p1_turn = true;
                     DisplayP2Hand();
+                    DisplayP1Hand();
                 }
             }
             else if (!defender)
@@ -137,6 +134,7 @@ public class CombatManager : MonoBehaviour
                     }
                     is_p1_turn = false;
                     DisplayP1Hand();
+                    DisplayP2Hand();
                 }
                 else if (!is_p1_turn && is_card_selected)
                 {
@@ -150,14 +148,24 @@ public class CombatManager : MonoBehaviour
                     {
                         p2_stack_mid = p2_stack_left.Pop();
                     }
-                    DisplayP2Hand();
                     is_p1_turn = true;
+                    DisplayP2Hand();
+                    DisplayP1Hand();
                 }
             }
             else if (attacker && defender)
             {
                 is_declare_horde = false;
                 is_combat = true;
+                p1_hand_canvas.gameObject.SetActive(false);
+                p2_hand_canvas.gameObject.SetActive(false);
+                fight_canvas.gameObject.SetActive(true);
+                atk_image.sprite = attacker.front_sprite;
+                def_image.sprite = defender.front_sprite;
+                attacker.cur_health = attacker.health;
+                defender.cur_health = defender.health;
+                atk_health.text = attacker.health.ToString();
+                def_health.text = defender.health.ToString();
             }
         }
         if (is_combat)
@@ -166,9 +174,13 @@ public class CombatManager : MonoBehaviour
             {
                 Debug.Log("attacker health is" + attacker.cur_health);
                 Debug.Log("defender health is" + defender.cur_health);
+                atk_health.text = attacker.cur_health.ToString();
+                def_health.text = defender.cur_health.ToString();
                 Fight();
                 Debug.Log("attacker health is" + attacker.cur_health);
                 Debug.Log("defender health is" + defender.cur_health);
+                atk_health.text = attacker.cur_health.ToString();
+                def_health.text = defender.cur_health.ToString();
             }
             if(attacker.cur_health<=0 && defender.cur_health > 0)
             {
@@ -266,6 +278,16 @@ public class CombatManager : MonoBehaviour
 
     void DisplayP1Hand()
     {
+        if (is_p1_turn) 
+        { 
+            p1_hand_canvas.gameObject.SetActive(true);
+            p2_hand_canvas.gameObject.SetActive(false);
+        }
+        if (is_combat)
+        {
+            p1_hand_canvas.gameObject.SetActive(false);
+            p2_hand_canvas.gameObject.SetActive(false);
+        }
         if (p1_stack_left.Count > 0)
         {
             if (!p1_card_images_arr[0].isActiveAndEnabled)
@@ -296,6 +318,16 @@ public class CombatManager : MonoBehaviour
 
     void DisplayP2Hand()
     {
+        if (!is_p1_turn)
+        {
+            p2_hand_canvas.gameObject.SetActive(true);
+            p1_hand_canvas.gameObject.SetActive(false);
+        }
+        if (is_combat)
+        {
+            p1_hand_canvas.gameObject.SetActive(false);
+            p2_hand_canvas.gameObject.SetActive(false);
+        }
         if (p2_stack_left.Count > 0)
         {
             if (!p2_card_images_arr[0].isActiveAndEnabled)
