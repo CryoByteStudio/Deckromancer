@@ -170,7 +170,7 @@ public class CombatManager : MonoBehaviour
         }
         if (is_combat)
         {
-            if (attacker && defender && attacker.cur_health > 0 && defender.cur_health > 0)
+            if (attacker.cur_health > 0 && defender.cur_health > 0)
             {
                 Debug.Log("attacker health is" + attacker.cur_health);
                 Debug.Log("defender health is" + defender.cur_health);
@@ -187,11 +187,23 @@ public class CombatManager : MonoBehaviour
                 is_combat = false;
                 is_combat_completed = true;
                 is_defender_win = true;
+                if (attacker.cur_health <= 0)
+                {
+                    attacker = null;
+                }
             }else
             {
                 is_combat = false;
                 is_combat_completed = true;
                 is_attacker_win = true;
+                if (attacker.cur_health <= 0)
+                {
+                    attacker = null;
+                }
+                if (defender.cur_health <= 0)
+                {
+                    defender = null;
+                }
             }
         }
         if (is_combat_completed)
@@ -201,12 +213,14 @@ public class CombatManager : MonoBehaviour
                 //defender win
                 is_declare_horde = true;
                 is_combat_completed = false;
+                is_p1_turn = true;
             }
             else
             {
                 //attacker win
                 is_declare_horde = true;
                 is_combat_completed = false;
+                is_p1_turn = true;
             }
         }
     }
