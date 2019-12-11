@@ -8,19 +8,27 @@ using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviour
 {
-    public List <CardMaterials> p1hand;
-    public List <CardMaterials> p2hand;
+    public List <CardMaterials> p1_cards;
+    public List <CardMaterials> p2_cards;
     [SerializeField]
     CardMaterials attacker;
     [SerializeField]
     CardMaterials defender;
-    Stack<CardMaterials> p1_stack_left;
-    CardMaterials p1_stack_mid;
-    Stack<CardMaterials> p1_stack_right;
-    Stack<CardMaterials> p2_stack_left;
-    CardMaterials p2_stack_mid;
-    Stack<CardMaterials> p2_stack_right;
-    
+    [SerializeField]
+    Canvas p1_hand_canvas;
+    [SerializeField]
+    Canvas p2_hand_canvas;
+
+    public Stack<CardMaterials> p1_stack_left = new Stack<CardMaterials>();
+    public CardMaterials p1_stack_mid;
+    public Stack<CardMaterials> p1_stack_right = new Stack<CardMaterials>();
+    public Stack<CardMaterials> p2_stack_left = new Stack<CardMaterials>();
+    public CardMaterials p2_stack_mid;
+    public Stack<CardMaterials> p2_stack_right = new Stack<CardMaterials>();
+    [SerializeField]
+    Image[] p1_card_images_arr;
+    [SerializeField]
+    Image[] p2_card_images_arr;
 
     public float phase_timer_fl = 5.0f;
     public bool is_declare_horde;
@@ -29,18 +37,129 @@ public class CombatManager : MonoBehaviour
     public bool is_attacker_win;
     public bool is_defender_win;
     public bool is_p1_turn;
+    public bool is_card_selected;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        attacker.cur_health = attacker.health;
-        defender.cur_health = defender.health;
+        is_p1_turn = true;
+        is_declare_horde = true;
+        is_card_selected = false;
+        for (int i = p1_cards.Count -1; i > 1; i--)
+        {
+            p1_stack_right.Push(p1_cards[i]);
+        }
+        p1_stack_mid = p1_cards[1];
+        p1_stack_left.Push(p1_cards[0]);
+        for (int i = p2_cards.Count - 1; i > 1; i--)
+        {
+            p2_stack_right.Push(p2_cards[i]);
+        }
+        p2_stack_mid = p2_cards[1];
+        p2_stack_left.Push(p2_cards[0]);
+
+        //show cards on buttons
+        DisplayP1Hand();
+        DisplayP2Hand();
+        Debug.Log("Select Attacker");
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (is_declare_horde)
+        {
+            if (is_p1_turn)
+            {
+                if (!p1_hand_canvas.isActiveAndEnabled)
+                {
+                    p1_hand_canvas.gameObject.SetActive(true);
+                    p2_hand_canvas.gameObject.SetActive(false);
+                }
+            }
+            if(!is_p1_turn)
+            {
+                if (!p2_hand_canvas.isActiveAndEnabled)
+                {
+                    p2_hand_canvas.gameObject.SetActive(true);
+                    p1_hand_canvas.gameObject.SetActive(false);
+                }
+            }
+            if (!attacker)
+            {
+                if (is_p1_turn && is_card_selected)
+                {
+                    attacker = p1_stack_mid;
+                    Debug.Log("Select Defender");
+                    is_card_selected = false;
+                    if (p1_stack_right.Count > 0)
+                    {
+                        p1_stack_mid = p1_stack_right.Pop();
+                    }
+                    else if (p1_stack_left.Count > 0)
+                    {
+                        p1_stack_mid = p1_stack_left.Pop();
+                    }
+                    is_p1_turn = false;
+                    DisplayP1Hand();
+                }
+                else if (!is_p1_turn && is_card_selected)
+                {
+                    attacker = p2_stack_mid;
+                    Debug.Log("Select Defender");
+                    is_card_selected = false;
+                    if (p2_stack_right.Count > 0)
+                    {
+                        p2_stack_mid = p2_stack_right.Pop();
+                    }
+                    else if (p2_stack_left.Count > 0)
+                    {
+                        p2_stack_mid = p2_stack_left.Pop();
+                    }
+                    is_p1_turn = true;
+                    DisplayP2Hand();
+                }
+            }
+            else if (!defender)
+            {
+                if (is_p1_turn && is_card_selected)
+                {
+                    defender = p1_stack_mid;
+                    is_card_selected = false;
+                    if (p1_stack_right.Count > 0)
+                    {
+                        p1_stack_mid = p1_stack_right.Pop();
+                    }
+                    else if (p1_stack_left.Count > 0)
+                    {
+                        p1_stack_mid = p1_stack_left.Pop();
+                    }
+                    is_p1_turn = false;
+                    DisplayP1Hand();
+                }
+                else if (!is_p1_turn && is_card_selected)
+                {
+                    defender = p2_stack_mid;
+                    is_card_selected = false;
+                    if (p2_stack_right.Count > 0)
+                    {
+                        p2_stack_mid = p2_stack_right.Pop();
+                    }
+                    else if (p2_stack_left.Count > 0)
+                    {
+                        p2_stack_mid = p2_stack_left.Pop();
+                    }
+                    DisplayP2Hand();
+                    is_p1_turn = true;
+                }
+            }
+            else if (attacker && defender)
+            {
+                is_declare_horde = false;
+                is_combat = true;
+            }
+        }
         if (is_combat)
         {
             if (attacker && defender && attacker.cur_health > 0 && defender.cur_health > 0)
@@ -68,10 +187,14 @@ public class CombatManager : MonoBehaviour
             if (is_defender_win)
             {
                 //defender win
+                is_declare_horde = true;
+                is_combat_completed = false;
             }
             else
             {
                 //attacker win
+                is_declare_horde = true;
+                is_combat_completed = false;
             }
         }
     }
@@ -104,23 +227,101 @@ public class CombatManager : MonoBehaviour
         return Random.Range(1, dmg);
     }
 
-    public void ShuffleRight()
+    public void ShuffleLeft()
     {
-        if (is_p1_turn)
+        if (is_p1_turn && p1_stack_left.Count > 0)
         {
-            p1_stack_left.Push(p1_stack_mid);
-            p1_stack_mid = p1_stack_right.Peek();
-            p1_stack_right.Pop();
+            p1_stack_right.Push(p1_stack_mid);
+            p1_stack_mid = p1_stack_left.Pop();
+            DisplayP1Hand();
+        }
+        else if (!is_p1_turn && p2_stack_left.Count > 0)
+        {
+            p2_stack_right.Push(p2_stack_mid);
+            p2_stack_mid = p2_stack_left.Pop();
+            DisplayP2Hand();
         }
     }
 
-    public void ShuffleLeft()
+    public void ShuffleRight()
     {
-
+        if (is_p1_turn && p1_stack_right.Count > 0)
+        {
+            p1_stack_left.Push(p1_stack_mid);
+            p1_stack_mid = p1_stack_right.Pop();
+            DisplayP1Hand();
+        }
+        else if (!is_p1_turn && p2_stack_right.Count > 0)
+        {
+            p2_stack_left.Push(p2_stack_mid);
+            p2_stack_mid = p2_stack_right.Pop();
+            DisplayP2Hand();
+        }
     }
 
-    public void SelectCard()
+     public void SelectCard()
     {
-
+        is_card_selected = true;
     }
+
+    void DisplayP1Hand()
+    {
+        if (p1_stack_left.Count > 0)
+        {
+            if (!p1_card_images_arr[0].isActiveAndEnabled)
+            {
+                p1_card_images_arr[0].enabled = true;
+            }
+            p1_card_images_arr[0].sprite = p1_stack_left.Peek().front_sprite;
+        }
+        else
+        {
+            p1_card_images_arr[2].enabled = false;
+        }
+        if (p1_stack_mid)
+            p1_card_images_arr[1].sprite = p1_stack_mid.front_sprite;
+        if (p1_stack_right.Count > 0)
+        {
+            if (!p1_card_images_arr[2].isActiveAndEnabled)
+            {
+                p1_card_images_arr[2].enabled = true;
+            }
+            p1_card_images_arr[2].sprite = p1_stack_right.Peek().front_sprite;
+        }
+        else
+        {
+            p1_card_images_arr[2].enabled = false;
+        }
+    }
+
+    void DisplayP2Hand()
+    {
+        if (p2_stack_left.Count > 0)
+        {
+            if (!p2_card_images_arr[0].isActiveAndEnabled)
+            {
+                p2_card_images_arr[0].enabled = true;
+            }
+            p2_card_images_arr[0].sprite = p2_stack_left.Peek().front_sprite;
+        }
+        else
+        {
+            p2_card_images_arr[0].enabled = false;
+        }
+        if (p2_stack_mid)
+            p2_card_images_arr[1].sprite = p2_stack_mid.front_sprite;
+        if (p2_stack_right.Count > 0)
+        {
+            if (!p2_card_images_arr[2].isActiveAndEnabled)
+            {
+                p2_card_images_arr[2].enabled = true;
+            }
+            p2_card_images_arr[2].sprite = p2_stack_right.Peek().front_sprite;
+        }
+        else
+        {
+            p2_card_images_arr[2].enabled = false;
+        }
+    }
+
 }

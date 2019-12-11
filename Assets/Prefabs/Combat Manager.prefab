@@ -43,5 +43,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13d097e2c34de7b49b479ae05dfb3a80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  p1_cards:
+  - {fileID: 8123678221812271364, guid: 46a67d035a12c6946a73911d2c7926b8, type: 3}
+  - {fileID: 4533305419749871629, guid: 74c7e99dfe1d1de49ad0eae83a4c8b80, type: 3}
+  - {fileID: 5986887187038096530, guid: f5c47a76fa2f101438001a1191f2d833, type: 3}
+  - {fileID: 8439691228536523135, guid: 450f256352a399345b8e2f1812dba743, type: 3}
+  - {fileID: 816709750659563036, guid: ab4a66f6beb0ba44896e2ab5d34c876d, type: 3}
+  p2_cards:
+  - {fileID: 9026082826395437104, guid: 644da461c4583614b84e968812d43349, type: 3}
+  - {fileID: 6833960667438536083, guid: 97d41dfef4c055c4c95a31706f6c0a13, type: 3}
+  - {fileID: 6572105298976907072, guid: 295b492dded084c4582f76bdc7312799, type: 3}
+  - {fileID: 4709710066986902051, guid: b8a2c769e071bfc468b72fe8a3ed071a, type: 3}
+  - {fileID: 5739139953323823932, guid: 341166e3dd018014a85991d840ff5f58, type: 3}
   attacker: {fileID: 0}
   defender: {fileID: 0}
+  p1_hand_canvas: {fileID: 0}
+  p2_hand_canvas: {fileID: 0}
+  p1_stack_mid: {fileID: 0}
+  p2_stack_mid: {fileID: 0}
+  p1_card_images_arr:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  p2_card_images_arr:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  phase_timer_fl: 5
+  is_declare_horde: 0
+  is_combat: 0
+  is_combat_completed: 0
+  is_attacker_win: 0
+  is_defender_win: 0
+  is_p1_turn: 0
+  is_card_selected: 1

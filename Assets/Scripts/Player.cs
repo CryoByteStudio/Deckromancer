@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 {
     int layerMask = 2;
     BoardGameManager gman;
+    public bool is_attacker;
     public int advantage;
     public int PlayerNumber;
     public Text hordetext;
