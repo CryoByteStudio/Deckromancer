@@ -1,6 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+// Must be added if using SceneManager functions
+using UnityEngine.SceneManagement;
+// Must be added if using UI functions
+using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviour
 {
