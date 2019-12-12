@@ -30,23 +30,12 @@ public class Location : MonoBehaviour
 
     }
     
-    // Update is called once per frame
-    void Update()
-    {
+    
 
-        
-      /*  if(Input.touchCount==1){
-            RaycastHit hit;
-          //  hit = Physics.Raycast(Input.GetTouch(1).position, Vector3.down);   #TODO raycast from touch to infinity, if it hits a location then call the current onclick method, also switch this to player,cs.
-            Input.GetTouch(1).position
-                
-            
-
-        }*/
-    }
-
+    //On battle won, will update the ownership of the location.
     public void UpdateOwnership(int newowner, Player newplayer)
     {
+        Debug.Log(isinitialized);
         if (isinitialized)
         {
             Owner.hordepoints -= hordevalue;
@@ -62,7 +51,16 @@ public class Location : MonoBehaviour
         
         Owner = newplayer;
         ownership = newowner;
-        rend.material = mats[ownership - 1];
+        Debug.Log(ownership);
+        if (gman.activelocation == this)
+        {
+            gman.defendinglocation.rend.material = mats[ownership - 1];
+        }
+        else{
+            rend.material = mats[ownership - 1];
+        }
+
+        
         Owner.hordepoints += hordevalue;
         Owner.powerpoints += powervalue;
         Owner.locationpoints++;
@@ -71,7 +69,9 @@ public class Location : MonoBehaviour
 
     }
 
-    
+     /*//# May Have To Re Enable This VVVVVVVVVVVVVVVVVVVVVVVVVV
+    //Handles Location selection by click
+
     private void HandleLocationSelect()
     {
         if (!gman.isdeclaringattack)
@@ -95,38 +95,55 @@ public class Location : MonoBehaviour
                 
                 if ((gman.activelocation.name=="Dread Caverns"&&this.ownership!=gman.playerturn)||(loc == gman.activelocation&&this.ownership!=gman.playerturn))//checks adjacent locations to see if any were the attacker, also checks to make sure it is owned by another player.
                 {
-                    
+                    gman.defendinglocation = this;
                     isattackable = true;//#TODO transition into battle
                     randomnum = Random.Range(0, 100) ;
                     randomnum += gman.activelocation.Owner.advantage;
                     Debug.Log(randomnum);
                     if (randomnum > 50)
                     {
-                        Debug.Log("Battle Won");
-                        UpdateOwnership(gman.playerturn, loc.Owner);
-                        gman.RefreshPlayerUI();
-                        if (gman.activelocation.Owner.locationpoints>=11)
-                        {
-                            gman.LoadVictoryScreen();
-                        }
+                        WinBattle();
                     }
                     else {
-                        Debug.Log("Battle Lost");
+                        LoseBattle();
                     }
-                   
-                    uiImage.enabled = false;
-                    gman.atkbutton.SetActive(false);
-                    gman.cnclbutton.SetActive(false);
-                   
-                        gman.EndTurn();
-                    
-                    
-                   
+
+
+
+
                 }
             }
         }
+    }*/
+
+        public void WinBattle()
+    {
+
+        Debug.Log("Battle Won");
+        UpdateOwnership(gman.playerturn, gman.defendinglocation.Owner);
+        gman.RefreshPlayerUI();
+        if (gman.activelocation.Owner.locationpoints >= 11)
+        {
+            gman.LoadVictoryScreen();
+        }
+        uiImage.enabled = false;
+        gman.atkbutton.SetActive(false);
+        gman.cnclbutton.SetActive(false);
+
+        gman.EndTurn();
     }
 
+    public void LoseBattle()
+    {
+
+        Debug.Log("Battle Lost");
+        uiImage.enabled = false;
+        gman.atkbutton.SetActive(false);
+        gman.cnclbutton.SetActive(false);
+
+        gman.EndTurn();
+    }
+    //Handles location selection by touch (ray)
     public void OnRayHit() {
         if (!gman.isdeclaringattack)
         {
@@ -150,30 +167,29 @@ public class Location : MonoBehaviour
                 if ((gman.activelocation.name == "Dread Caverns" && this.ownership != gman.playerturn) || (loc == gman.activelocation && this.ownership != gman.playerturn))//checks adjacent locations to see if any were the attacker, also checks to make sure it is owned by another player.
                 {
 
-                    isattackable = true;//#TODO transition into battle
-                    randomnum = Random.Range(0, 100);
-                    randomnum += gman.activelocation.Owner.advantage;
-                    Debug.Log(randomnum);
-                    if (randomnum > 50)
-                    {
-                        Debug.Log("Battle Won");
-                        UpdateOwnership(gman.playerturn, loc.Owner);
-                        gman.RefreshPlayerUI();
-                        if (gman.activelocation.Owner.locationpoints >= 11)
-                        {
-                            gman.LoadVictoryScreen();
-                        }
-                    }
-                    else
-                    {
-                        Debug.Log("Battle Lost");
-                    }
+                    gman.defendinglocation = this;
+                  isattackable = true;
+                    gman.StartBattle();
+                    //#TODO transition into battle
+                                      /*
+                                       *Old Combat system for debug
+                                       * randomnum = Random.Range(0, 100);
+                                       randomnum += gman.activelocation.Owner.advantage;
+                                       Debug.Log(randomnum);
+                                      if (randomnum > 50)
+                                       {
+                                           WinBattle();
 
-                    uiImage.enabled = false;
-                    gman.atkbutton.SetActive(false);
-                    gman.cnclbutton.SetActive(false);
 
-                    gman.EndTurn();
+                                       }
+                                       else
+                                       {
+                                           LoseBattle();
+
+
+                                       }*/
+
+
 
 
 
@@ -181,62 +197,12 @@ public class Location : MonoBehaviour
             }
         }
     }
+    //Handles Location Seleection by mouse (debugigng)
     private void OnMouseDown()
     {
 
         OnRayHit();
-        /*if (!gman.isdeclaringattack)
-        {
-            gman.activelocation = this;
-            gman.atkbutton.gameObject.SetActive(true);
-            gman.cnclbutton.gameObject.SetActive(true);
-            uiImage.sprite = cardimage;
-            if (uiImage.enabled == false)
-            {
-
-                uiImage.enabled = true;
-
-
-            }
-        }
-        else
-        {
-            foreach (Location loc in adjacentlocations)
-            {
-
-                if ((gman.activelocation.name == "Dread Caverns" && this.ownership != gman.playerturn) || (loc == gman.activelocation && this.ownership != gman.playerturn))//checks adjacent locations to see if any were the attacker, also checks to make sure it is owned by another player.
-                {
-
-                    isattackable = true;//#TODO transition into battle
-                    randomnum = Random.Range(0, 100);
-                    randomnum += gman.activelocation.Owner.advantage;
-                    Debug.Log(randomnum);
-                    if (randomnum > 50)
-                    {
-                        Debug.Log("Battle Won");
-                        UpdateOwnership(gman.playerturn, loc.Owner);
-                        gman.RefreshPlayerUI();
-                        if (gman.activelocation.Owner.locationpoints >= 11)
-                        {
-                            gman.LoadVictoryScreen();
-                        }
-                    }
-                    else
-                    {
-                        Debug.Log("Battle Lost");
-                    }
-
-                    uiImage.enabled = false;
-                    gman.atkbutton.SetActive(false);
-                    gman.cnclbutton.SetActive(false);
-
-                    gman.EndTurn();
-
-
-
-                }
-            }
-        }*/
+        
     }
 
 }

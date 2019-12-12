@@ -8,7 +8,6 @@ public class Player : MonoBehaviour
 {
     int layerMask = 2;
     BoardGameManager gman;
-    public bool is_attacker;
     public int advantage;
     public int PlayerNumber;
     public Text hordetext;
@@ -17,6 +16,7 @@ public class Player : MonoBehaviour
     public int hordepoints;
     public int powerpoints;
     public int locationpoints;
+   
     public List <Location> OwnedLocations;
     // Start is called before the first frame update
     void Start()
@@ -27,6 +27,22 @@ public class Player : MonoBehaviour
 
     void InitializePlayer()
     {
+        if (gman.gameinprogress)
+        {
+            OwnedLocations.Clear();
+        }
+        else
+        {
+
+        }
+
+
+        if (gman.gameinprogress)
+        {
+            OwnedLocations.Clear();
+            gman.SetLocationsInProgress();
+        }
+        
         if (PlayerNumber == 1)
         {
             OwnedLocations = gman.playerlocations;
@@ -69,19 +85,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        /* if (Input.touchCount == 1)
-         {
-
-             Touch touch = Input.touches[0];
-             Ray touchRay = Camera.main.ScreenPointToRay(touch.position);
-             RaycastHit[] hits = Physics.RaycastAll(touchRay);
-             foreach (RaycastHit hit in hits)
-             {
-
-                 print("touching object name=" + hit.transform.gameObject.name);
-                //if()
-             }
-         }*/
+        
     }
 
 

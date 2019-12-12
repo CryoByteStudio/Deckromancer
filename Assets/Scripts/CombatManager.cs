@@ -21,6 +21,7 @@ public class CombatManager : MonoBehaviour
     [SerializeField]
     Canvas fight_canvas;
 
+    public BoardGameManager gman;
     public Stack<CardMaterials> p1_stack_left = new Stack<CardMaterials>();
     public CardMaterials p1_stack_mid;
     public Stack<CardMaterials> p1_stack_right = new Stack<CardMaterials>();
@@ -214,6 +215,8 @@ public class CombatManager : MonoBehaviour
                 is_declare_horde = true;
                 is_combat_completed = false;
                 is_p1_turn = true;
+                gman.LoseBattle();
+                
             }
             else
             {
@@ -221,6 +224,7 @@ public class CombatManager : MonoBehaviour
                 is_declare_horde = true;
                 is_combat_completed = false;
                 is_p1_turn = true;
+                gman.WinBattle();
             }
         }
     }

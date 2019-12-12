@@ -4,10 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - Player2
   - Player1
-  - player2
-  - DefHealth
-  - AtkHealth
   layers:
   - Default
   - TransparentFX
