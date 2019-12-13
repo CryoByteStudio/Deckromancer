@@ -66,24 +66,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.touchCount == 1)
-        {
-            Touch touch = Input.touches[0];
-            RaycastHit hit;
-            
-            if (Physics.Raycast(touch.position, Vector3.down, out hit))
-            {
-                if (hit.collider != null)
-                {
-                    // Find the hit reciver (if existant) and call the method
-                    var hitloc = hit.collider.gameObject.GetComponent<Location>();
-                    if (hitloc != null)
-                    {
-                        hitloc.OnRayHit();
-                    }
-                }
-            }
-        }
+        
 
         
     }

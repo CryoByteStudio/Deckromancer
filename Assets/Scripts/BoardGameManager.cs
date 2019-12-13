@@ -14,6 +14,8 @@ public class BoardGameManager : MonoBehaviour
         set { _instance = value; }
     }
 
+
+    public GameObject cman;
     public GameObject combatsystem;
     public bool gameinprogress=false;
     public List<string> ailocnames;
@@ -51,14 +53,15 @@ public class BoardGameManager : MonoBehaviour
     {
         activelocation.WinBattle();
         //disables combat
-        combatsystem.SetActive(false);
+        //combatsystem.SetActive(false);
+        Destroy(cman);
     }
     //Attacker loses battle
     public void LoseBattle()
     {
       activelocation.LoseBattle();
         //disables combat
-        combatsystem.SetActive(false);
+        Destroy(cman);
     }
     private void OnLevelWasLoaded(int level)
     {
@@ -84,7 +87,8 @@ public class BoardGameManager : MonoBehaviour
     //Enable combat
     public void StartBattle()
     {
-        combatsystem.SetActive(true);
+        Instantiate(combatsystem);
+        //combatsystem.SetActive(true);
     }
    
        
@@ -94,7 +98,29 @@ public class BoardGameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+
+        if (Input.touchCount == 1)
+        {
+            Touch touch = Input.touches[0];
+            RaycastHit hit;
+
+            if (Physics.Raycast(touch.position, Vector3.down, out hit))
+            {
+                if (hit.collider != null)
+                {
+                    // Find the hit reciver (if existant) and call the method
+                    var hitloc = hit.collider.gameObject.GetComponent<Location>();
+                    if (hitloc != null)
+                    {
+                        hitloc.OnRayHit();
+                    }
+                }
+            }
+        }
+
+
+
     }
 
     public void SetupGame()

@@ -58,7 +58,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -6
   m_TargetDisplay: 0
 --- !u!114 &3606570934142205838
 MonoBehaviour:
@@ -549,6 +549,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7720274414028168397}
     m_Modifications:
+    - target: {fileID: 2196895007568325738, guid: bc676add421a577478c6f028d3e67af3,
+        type: 3}
+      propertyPath: m_Name
+      value: Fight Club
+      objectReference: {fileID: 0}
     - target: {fileID: 2196895007568325733, guid: bc676add421a577478c6f028d3e67af3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -654,11 +659,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2196895007568325738, guid: bc676add421a577478c6f028d3e67af3,
-        type: 3}
-      propertyPath: m_Name
-      value: Fight Club
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc676add421a577478c6f028d3e67af3, type: 3}
 --- !u!224 &7720274414486239417 stripped
@@ -728,6 +728,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7720274414028168397}
     m_Modifications:
+    - target: {fileID: 1212944382194414566, guid: 8a508c7457ec8054db11d67af3d418b3,
+        type: 3}
+      propertyPath: m_Name
+      value: p1_hand
+      objectReference: {fileID: 0}
     - target: {fileID: 1212944382194414567, guid: 8a508c7457ec8054db11d67af3d418b3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -833,22 +838,17 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1212944382194414566, guid: 8a508c7457ec8054db11d67af3d418b3,
-        type: 3}
-      propertyPath: m_Name
-      value: p1_hand
-      objectReference: {fileID: 0}
-    - target: {fileID: 1212944382072461817, guid: 8a508c7457ec8054db11d67af3d418b3,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 7720274414146879489}
     - target: {fileID: 1212944382727207997, guid: 8a508c7457ec8054db11d67af3d418b3,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 7720274414146879489}
     - target: {fileID: 1212944381957703916, guid: 8a508c7457ec8054db11d67af3d418b3,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7720274414146879489}
+    - target: {fileID: 1212944382072461817, guid: 8a508c7457ec8054db11d67af3d418b3,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 

@@ -21,6 +21,8 @@ public class CombatManager : MonoBehaviour
     [SerializeField]
     Canvas fight_canvas;
 
+ 
+    public float turndelaytimer=2f;
     public BoardGameManager gman;
     public Stack<CardMaterials> p1_stack_left = new Stack<CardMaterials>();
     public CardMaterials p1_stack_mid;
@@ -54,6 +56,9 @@ public class CombatManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+        gman=FindObjectOfType<BoardGameManager>();
+        gman.cman = transform.parent.gameObject;
         is_p1_turn = true;
         is_declare_horde = true;
         is_card_selected = false;
@@ -171,68 +176,74 @@ public class CombatManager : MonoBehaviour
         }
         if (is_combat)
         {
-            if (attacker.cur_health > 0 && defender.cur_health > 0)
-            {
-                Debug.Log("attacker health is" + attacker.cur_health);
-                Debug.Log("defender health is" + defender.cur_health);
-                atk_health.text = attacker.cur_health.ToString();
-                def_health.text = defender.cur_health.ToString();
-                Fight();
-                Debug.Log("attacker health is" + attacker.cur_health);
-                Debug.Log("defender health is" + defender.cur_health);
-                atk_health.text = attacker.cur_health.ToString();
-                def_health.text = defender.cur_health.ToString();
-            }
-            if(attacker.cur_health<=0 && defender.cur_health > 0)
-            {
-                is_combat = false;
-                is_combat_completed = true;
-                is_defender_win = true;
-                if (attacker.cur_health <= 0)
+          
+                if (attacker.cur_health > 0 && defender.cur_health > 0)
                 {
-                    attacker = null;
+                    Debug.Log("attacker health is" + attacker.cur_health);
+                    Debug.Log("defender health is" + defender.cur_health);
+                    atk_health.text = attacker.cur_health.ToString();
+                    def_health.text = defender.cur_health.ToString();
+                    Fight();
+                    Debug.Log("attacker health is" + attacker.cur_health);
+                    Debug.Log("defender health is" + defender.cur_health);
+                    atk_health.text = attacker.cur_health.ToString();
+                    def_health.text = defender.cur_health.ToString();
                 }
-            }else
-            {
-                is_combat = false;
-                is_combat_completed = true;
-                is_attacker_win = true;
-                if (attacker.cur_health <= 0)
+                if (attacker.cur_health <= 0 && defender.cur_health > 0)
                 {
-                    attacker = null;
+                    is_combat = false;
+                    is_combat_completed = true;
+                    is_defender_win = true;
+                    if (attacker.cur_health <= 0)
+                    {
+                        attacker = null;
+                    }
                 }
-                if (defender.cur_health <= 0)
+                else
                 {
-                    defender = null;
+                    is_combat = false;
+                    is_combat_completed = true;
+                    is_attacker_win = true;
+                    if (attacker.cur_health <= 0)
+                    {
+                        attacker = null;
+                    }
+                    if (defender.cur_health <= 0)
+                    {
+                        defender = null;
+                    }
                 }
             }
-        }
-        if (is_combat_completed)
-        {
-            if (is_defender_win)
+            if (is_combat_completed)
             {
-                //defender win
-                is_declare_horde = true;
-                is_combat_completed = false;
-                is_p1_turn = true;
-                gman.LoseBattle();
-                
-            }
-            else
-            {
-                //attacker win
-                is_declare_horde = true;
-                is_combat_completed = false;
-                is_p1_turn = true;
-                gman.WinBattle();
-            }
+                if (is_defender_win)
+                {
+                    //defender win
+                    is_declare_horde = true;
+                    is_combat_completed = false;
+                    is_p1_turn = true;
+                    gman.LoseBattle();
+
+                }
+                else
+                {
+                    //attacker win
+                    is_declare_horde = true;
+                    is_combat_completed = false;
+                    is_p1_turn = true;
+                    gman.WinBattle();
+                }
+
+            
         }
     }
 
     void Fight()
     {
+
         defender.cur_health -= DealDamage(attacker.die_dmg) + attacker.add_dmg;
         attacker.cur_health -= DealDamage(defender.die_dmg) + defender.add_dmg;
+        
     }
 
     int DealDamage(CardMaterials.Die_Type die_Type)
