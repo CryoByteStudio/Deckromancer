@@ -43,7 +43,8 @@ public class CombatManager : MonoBehaviour
     [SerializeField]
     Text def_health;
 
-    public float phase_timer_fl = 5.0f;
+    public float phase_timer_fl = 3.0f;
+    float combat_timer =0;
     public bool is_declare_horde;
     public bool is_combat;
     public bool is_combat_completed;
@@ -181,7 +182,12 @@ public class CombatManager : MonoBehaviour
         }
         if (is_combat)
         {
-          
+            if (combat_timer <= phase_timer_fl)
+            {
+                combat_timer += Time.deltaTime;
+            }
+            else
+            {
                 if (attacker.cur_health > 0 && defender.cur_health > 0)
                 {
                     Debug.Log("attacker health is" + attacker.cur_health);
@@ -193,8 +199,9 @@ public class CombatManager : MonoBehaviour
                     Debug.Log("defender health is" + defender.cur_health);
                     atk_health.text = attacker.cur_health.ToString();
                     def_health.text = defender.cur_health.ToString();
+                    combat_timer = 0;
                 }
-                if (attacker.cur_health <= 0 && defender.cur_health > 0)
+                else if (attacker.cur_health <= 0 && defender.cur_health > 0)
                 {
                     is_combat = false;
                     is_combat_completed = true;
@@ -212,17 +219,24 @@ public class CombatManager : MonoBehaviour
                     is_attacker_win = true;
                     if (attacker.cur_health <= 0)
                     {
-                    gman.MonsterDiscard.Add(attacker);
-                    attacker = null;
+                        gman.MonsterDiscard.Add(attacker);
+                        attacker = null;
                     }
                     if (defender.cur_health <= 0)
                     {
-                    gman.MonsterDiscard.Add(defender);
-                    defender = null;
+                        gman.MonsterDiscard.Add(defender);
+                        defender = null;
                     }
                 }
             }
-            if (is_combat_completed)
+        }
+        if (is_combat_completed)
+        {
+            if (combat_timer <= phase_timer_fl)
+            {
+                combat_timer += Time.deltaTime;
+            }
+            else
             {
                 if (is_defender_win)
                 {
@@ -241,8 +255,7 @@ public class CombatManager : MonoBehaviour
                     is_p1_turn = true;
                     gman.WinBattle();
                 }
-
-            
+            }
         }
     }
 
