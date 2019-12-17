@@ -14,7 +14,11 @@ public class BoardGameManager : MonoBehaviour
         set { _instance = value; }
     }
 
-
+    bool is_loaded = false;
+    public Player player1;
+    public Player player2;
+    public List<CardMaterials> MonsterDeck;
+    public List<CardMaterials> MonsterDiscard;
     public GameObject cman;
     public GameObject combatsystem;
     public bool gameinprogress=false;
@@ -65,6 +69,14 @@ public class BoardGameManager : MonoBehaviour
     }
     private void OnLevelWasLoaded(int level)
     {
+        if (!is_loaded)
+        {
+            ShuffleDeck(MonsterDeck, MonsterDiscard);
+            DrawCards(player1);
+            DrawCards(player2);
+            if(player1.cardsHand.Count>0)
+                is_loaded = true;
+        }
         
     }
 
@@ -98,7 +110,11 @@ public class BoardGameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        OnLevelWasLoaded(1);
+        if(MonsterDeck.Count<= 10)
+        {
+            ShuffleDeck(MonsterDeck, MonsterDiscard);
+        }
 
         if (Input.touchCount == 1)
         {
@@ -124,8 +140,6 @@ public class BoardGameManager : MonoBehaviour
     }
 
     public void SetupGame()
-
-
     { 
             //Determine first player
             if (Random.Range(0, 100) > 50)
@@ -173,8 +187,7 @@ public class BoardGameManager : MonoBehaviour
                     }
                 }
             }
-        
-      
+
     }
 
     public void LoadGameScene(string scenetoload)
@@ -210,9 +223,18 @@ public class BoardGameManager : MonoBehaviour
         if (playerturn == 1)
         {
             playerturn = 2;
-        }else if (playerturn == 2)
+            for (int i = player2.cardsHand.Count; i < player2.hordepoints; i++)
+            {
+                DrawCards(player2);
+            }
+        }
+        else if (playerturn == 2)
         {
             playerturn = 1;
+            for (int i = player1.cardsHand.Count; i < player1.hordepoints; i++)
+            {
+                DrawCards(player1);
+            }
         }
         atkbutton.gameObject.SetActive(false);
         cnclbutton.gameObject.SetActive(false);
@@ -262,4 +284,31 @@ public class BoardGameManager : MonoBehaviour
             }
         }
     }
+
+    public void ShuffleDeck(List<CardMaterials> deck, List<CardMaterials> discardDeck)
+    {
+        while (discardDeck.Count > 0)
+        {
+                deck.Add(discardDeck[0]);
+            discardDeck.RemoveAt(0);
+        }
+        for(int i = 0; i<= deck.Count-1; i++)
+        {
+            CardMaterials holdCard = deck[i];
+            int randCard = Random.Range(0,deck.Count);
+            deck[i] = deck[randCard];
+            deck[randCard] = holdCard;
+        }
+    }
+
+    void DrawCards(Player player)
+    {
+        for (int i = player.cardsHand.Count; i < player.hordepoints; i++)
+        {
+            player.cardsHand.Add(MonsterDeck[0]);
+            MonsterDeck.RemoveAt(0);
+        }
+    }
+
+
 }

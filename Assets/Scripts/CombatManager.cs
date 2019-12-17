@@ -8,8 +8,8 @@ using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviour
 {
-    public List<CardMaterials> p1_cards;
-    public List<CardMaterials> p2_cards;
+    public List<CardMaterials> p1_cards = new List<CardMaterials>();
+    public List<CardMaterials> p2_cards = new List<CardMaterials>();
     [SerializeField]
     CardMaterials attacker;
     [SerializeField]
@@ -56,10 +56,15 @@ public class CombatManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        gman = FindObjectOfType<BoardGameManager>();
+        p1_cards = gman.player1.cardsHand;
+        p2_cards = gman.player2.cardsHand;
         gman=FindObjectOfType<BoardGameManager>();
         gman.cman = transform.parent.gameObject;
-        is_p1_turn = true;
+        if (gman.playerturn == 1)
+            is_p1_turn = true;
+        else
+            is_p1_turn = false;
         is_declare_horde = true;
         is_card_selected = false;
         fight_canvas.gameObject.SetActive(false);
@@ -196,6 +201,7 @@ public class CombatManager : MonoBehaviour
                     is_defender_win = true;
                     if (attacker.cur_health <= 0)
                     {
+                        gman.MonsterDiscard.Add(attacker);
                         attacker = null;
                     }
                 }
@@ -206,11 +212,13 @@ public class CombatManager : MonoBehaviour
                     is_attacker_win = true;
                     if (attacker.cur_health <= 0)
                     {
-                        attacker = null;
+                    gman.MonsterDiscard.Add(attacker);
+                    attacker = null;
                     }
                     if (defender.cur_health <= 0)
                     {
-                        defender = null;
+                    gman.MonsterDiscard.Add(defender);
+                    defender = null;
                     }
                 }
             }

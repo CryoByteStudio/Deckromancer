@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    public List<CardMaterials> cardsHand = new List<CardMaterials>();
     int layerMask = 2;
     BoardGameManager gman;
     public int advantage;
