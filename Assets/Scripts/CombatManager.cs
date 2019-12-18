@@ -8,6 +8,18 @@ using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviour
 {
+    /* static CombatManager _instance = null;
+
+     public static CombatManager instance
+     {
+         get { return _instance; }
+         set { _instance = value; }
+     }*/
+    public int P1BuffDamage;
+    public int P1BuffHealth;
+    public int P2BuffDamage;
+    public int P2BuffHealth;
+
     public List<CardMaterials> p1_cards = new List<CardMaterials>();
     public List<CardMaterials> p2_cards = new List<CardMaterials>();
     [SerializeField]
@@ -57,6 +69,13 @@ public class CombatManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+      /*  if (instance)
+            DestroyImmediate(gameObject);
+        else
+        {
+            DontDestroyOnLoad(this);
+            instance = this;
+        }*/
         gman = FindObjectOfType<BoardGameManager>();
         p1_cards = gman.player1.cardsHand;
         p2_cards = gman.player2.cardsHand;

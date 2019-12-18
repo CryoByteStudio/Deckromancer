@@ -7,6 +7,7 @@ public class CameraDragger : MonoBehaviour
 
     public float dragSpeed = 2;
     private Vector3 dragOrigin;
+    public float dragmult = 35;
     public float xmax;
     public float xmin;
     public float ymax;
@@ -17,7 +18,7 @@ public class CameraDragger : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        dragSpeed = transform.position.y / dragmult;
     }
 
 
@@ -25,6 +26,7 @@ public class CameraDragger : MonoBehaviour
 
     public void Zoom(float zoomvalue)
     {
+        dragSpeed = transform.position.y/dragmult;
         gameObject.transform.SetPositionAndRotation(new Vector3(transform.position.x, transform.position.y-zoomvalue, transform.position.z), transform.rotation);
         if (transform.position.y > ymax)
         {
@@ -36,7 +38,7 @@ public class CameraDragger : MonoBehaviour
             gameObject.transform.SetPositionAndRotation(new Vector3(transform.position.x, ymin, transform.position.z), transform.rotation);
         }
 
-        Debug.Log(transform.position.y);
+
     }
     // Update is called once per frame
     void Update()

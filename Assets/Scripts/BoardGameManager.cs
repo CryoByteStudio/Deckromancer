@@ -6,14 +6,15 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class BoardGameManager : MonoBehaviour
 {
-    static BoardGameManager _instance = null;
+   /* static BoardGameManager _instance = null;
 
     public static BoardGameManager instance
     {
         get { return _instance; }
         set { _instance = value; }
-    }
+    }*/
 
+    public GameObject Options;
     bool is_loaded = false;
     public Player player1;
     public Player player2;
@@ -38,32 +39,54 @@ public class BoardGameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (instance)
+      /*  if (instance)
             DestroyImmediate(gameObject);
         else
         {
             DontDestroyOnLoad(this);
             instance = this;
-        }
+        }*/
         locations = FindObjectsOfType<Location>().ToList();
         locations = locations.OrderBy(x => Random.value).ToList();
         SetupGame();
         gameinprogress = true;
      
     }
+    public void CheckForBuffs()
+    {
 
+        foreach (Location loc in defendinglocation.adjacentlocations)
+        {
+            loc.ApplyBuff();
+        }
+        defendinglocation.ApplyBuff();
+
+    }
+    public void QuitApp()
+    {
+        Application.Quit();
+    }
     //Attacker Wins Battle
  public void WinBattle()
     {
-        activelocation.WinBattle();
+        defendinglocation.WinBattle();
         //disables combat
         //combatsystem.SetActive(false);
         Destroy(cman);
     }
+
+    public void ToggleOptionsMenuOn()
+    {
+        Options.SetActive(true);
+    }
+    public void ToggleOptionsMenuOff()
+    {
+        Options.SetActive(false);
+    }
     //Attacker loses battle
     public void LoseBattle()
     {
-      activelocation.LoseBattle();
+      defendinglocation.LoseBattle();
         //disables combat
         Destroy(cman);
     }
@@ -99,7 +122,21 @@ public class BoardGameManager : MonoBehaviour
     //Enable combat
     public void StartBattle()
     {
+        if (defendinglocation.name == "Riptide")
+        {
+            if (playerturn==1)
+            {
+                // in cman, removoe a random card from p1 hand
+            }
+            else if (playerturn == 2)
+            { 
+                //in cman, remove a random card from p2 hand
+
+            }
+            
+        }
         Instantiate(combatsystem);
+        CheckForBuffs();
         //combatsystem.SetActive(true);
     }
    
@@ -164,7 +201,7 @@ public class BoardGameManager : MonoBehaviour
                     {
 
                         playerlocations.Add(locations[i]);
-                    Debug.Log("added locs");
+                  //  Debug.Log("added locs");
 
                     }
                     else
@@ -213,6 +250,7 @@ public class BoardGameManager : MonoBehaviour
         isdeclaringattack = false;
         atkbutton.SetActive(false);
         cnclbutton.SetActive(false);
+       
         activelocation.uiImage.enabled = false;
         
     }
@@ -239,6 +277,8 @@ public class BoardGameManager : MonoBehaviour
         atkbutton.gameObject.SetActive(false);
         cnclbutton.gameObject.SetActive(false);
         Debug.Log("End turn");
+        activelocation = null;
+        defendinglocation = null;
         RefreshPlayerUI();
        
     }

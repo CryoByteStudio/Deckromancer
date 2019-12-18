@@ -16,26 +16,82 @@ public class Location : MonoBehaviour
     public Sprite cardimage;
     public Image uiImage;
     [SerializeField]
-    Location[] adjacentlocations;
+    public Location[] adjacentlocations;
     public int ownership;
     Renderer rend;
     public Material[] mats;
+    public CombatManager cman;
 
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log(name);
         gman = FindObjectOfType<BoardGameManager>();
        
         rend = GetComponent<Renderer>();
 
     }
     
-    
+    public void ApplyBuff()
+    {
+        cman = FindObjectOfType<CombatManager>();
+        if (name == "Shacklebone")
+        {
+            Debug.Log("Applying" + this.name + "to player: " + ownership);
+            if (ownership == 1)
+            {
+                
+                cman.P1BuffDamage++;
+            }else if(ownership == 2)
+            {
+                cman.P2BuffDamage++;
+            }
+        }else if (name == "CryptGarden")
+        {
+            Debug.Log("Applying" + this.name + "to player: " + ownership);
+            if (ownership == 1)
+            {
+                cman.P1BuffHealth++;
+            }
+            else if (ownership == 2)
+            {
+                cman.P2BuffHealth++;
+            }
+        }
+        else if (name == "CorpseMound")
+        {
+            Debug.Log("Applying" + this.name + "to player: " + ownership);
+            if (ownership == 1)
+            {
+                cman.P1BuffHealth++;
+            }
+            else if (ownership == 2)
+            {
+                cman.P2BuffHealth++;
+            }
+        }
+        else if(name=="Shaded Woods")
+        {
+            Debug.Log("Applying" + this.name + "to player: " + ownership);
+            if (ownership == 1)
+            {
+                cman.P1BuffDamage++;
+            }
+            else if (ownership == 2)
+            {
+                cman.P2BuffDamage++;
+            }
+        }
+        else
+        {
+            
+        }
+    }
 
     //On battle won, will update the ownership of the location.
     public void UpdateOwnership(int newowner, Player newplayer)
     {
-        Debug.Log(isinitialized);
+      //  Debug.Log(isinitialized);
         if (isinitialized)
         {
             Owner.hordepoints -= hordevalue;
@@ -51,7 +107,7 @@ public class Location : MonoBehaviour
         
         Owner = newplayer;
         ownership = newowner;
-        Debug.Log(ownership);
+       // Debug.Log(ownership);
         if (gman.activelocation == this)
         {
             gman.defendinglocation.rend.material = mats[ownership - 1];
@@ -120,7 +176,7 @@ public class Location : MonoBehaviour
     {
 
         Debug.Log("Battle Won");
-        UpdateOwnership(gman.playerturn, gman.defendinglocation.Owner);
+        UpdateOwnership(gman.playerturn, gman.activelocation.Owner);
         gman.RefreshPlayerUI();
         if (gman.activelocation.Owner.locationpoints >= 11)
         {
