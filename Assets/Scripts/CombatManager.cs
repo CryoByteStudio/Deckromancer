@@ -128,8 +128,11 @@ public class CombatManager : MonoBehaviour
                         p1_stack_mid = p1_stack_left.Pop();
                     }
                     is_p1_turn = false;
+                    attacker.cur_health = attacker.health + P1BuffHealth;
+                    attacker.add_dmg = attacker.add_dmg + P1BuffDamage;
                     DisplayP1Hand();
                     DisplayP2Hand();
+
                 }
                 else if (!is_p1_turn && is_card_selected)
                 {
@@ -145,6 +148,8 @@ public class CombatManager : MonoBehaviour
                         p2_stack_mid = p2_stack_left.Pop();
                     }
                     is_p1_turn = true;
+                    attacker.cur_health = attacker.health + P2BuffHealth;
+                    attacker.add_dmg = attacker.add_dmg + P2BuffDamage;
                     DisplayP2Hand();
                     DisplayP1Hand();
                 }
@@ -164,6 +169,8 @@ public class CombatManager : MonoBehaviour
                         p1_stack_mid = p1_stack_left.Pop();
                     }
                     is_p1_turn = false;
+                    defender.cur_health = defender.health + P1BuffHealth;
+                    defender.add_dmg = defender.add_dmg + P1BuffDamage;
                     DisplayP1Hand();
                     DisplayP2Hand();
                 }
@@ -180,6 +187,8 @@ public class CombatManager : MonoBehaviour
                         p2_stack_mid = p2_stack_left.Pop();
                     }
                     is_p1_turn = true;
+                    defender.cur_health = defender.health + P2BuffHealth;
+                    defender.add_dmg = defender.add_dmg + P2BuffDamage;
                     DisplayP2Hand();
                     DisplayP1Hand();
                 }
@@ -193,10 +202,8 @@ public class CombatManager : MonoBehaviour
                 fight_canvas.gameObject.SetActive(true);
                 atk_image.sprite = attacker.front_sprite;
                 def_image.sprite = defender.front_sprite;
-                attacker.cur_health = attacker.health;
-                defender.cur_health = defender.health;
-                atk_health.text = attacker.health.ToString();
-                def_health.text = defender.health.ToString();
+                atk_health.text = attacker.cur_health.ToString();
+                def_health.text = defender.cur_health.ToString();
             }
         }
         if (is_combat)
