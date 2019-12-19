@@ -6,14 +6,19 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class BoardGameManager : MonoBehaviour
 {
-   /* static BoardGameManager _instance = null;
+    /* static BoardGameManager _instance = null;
 
-    public static BoardGameManager instance
-    {
-        get { return _instance; }
-        set { _instance = value; }
-    }*/
+     public static BoardGameManager instance
+     {
+         get { return _instance; }
+         set { _instance = value; }
+     }*/
 
+    public GameObject startturnbuttons;
+    public Location Deadzone;
+    public Location Thrallville;
+    public bool cantriggermortton=true;
+    public bool cantriggerdeadzone=true;
     public GameObject Options;
     bool is_loaded = false;
     public Player player1;
@@ -72,6 +77,7 @@ public class BoardGameManager : MonoBehaviour
         defendinglocation.WinBattle();
         //disables combat
         //combatsystem.SetActive(false);
+        cman.GetComponentInChildren<CombatManager>().ReturnHandsToPLayer();
         Destroy(cman);
     }
 
@@ -88,6 +94,8 @@ public class BoardGameManager : MonoBehaviour
     {
       defendinglocation.LoseBattle();
         //disables combat
+       //
+        cman.GetComponentInChildren<CombatManager>().ReturnHandsToPLayer();
         Destroy(cman);
     }
     private void OnLevelWasLoaded(int level)
@@ -126,11 +134,14 @@ public class BoardGameManager : MonoBehaviour
         {
             if (playerturn==1)
             {
-                // in cman, removoe a random card from p1 hand
+                DiscardOneCard(player1);
+                Debug.Log("removed random card from p1");
             }
             else if (playerturn == 2)
-            { 
-                //in cman, remove a random card from p2 hand
+            {
+
+                DiscardOneCard(player2);
+                Debug.Log("removed random card from p2");
 
             }
             
@@ -141,13 +152,43 @@ public class BoardGameManager : MonoBehaviour
     }
    
        
-    
+    public void UseThrallvilleEffect()
+    {
+        
+        DiscardOneCard(Thrallville.Owner);
+        DrawOneCard(Thrallville.Owner);
+        DrawOneCard(Thrallville.Owner);
+    }
+    public void UseDarkObeliskEffect(Player player)
+    {
+
+    }
+    public void UseDeadZoneEffect(Player player)
+    {
+
+    }
+    public void UseDeadMansBluffEffect(Player player)
+    {
+
+    }
 
 
     // Update is called once per frame
     void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            Debug.Log(player1.cardsHand.Count);
+           // Debug.Log("drawing");
+           // DrawOneCard(player1);
+        }else if (Input.GetKeyDown(KeyCode.B))
+        {
+          //  Debug.Log("discarding");
+           // DiscardOneCard(player1);
+        }
         OnLevelWasLoaded(1);
+
         if(MonsterDeck.Count<= 10)
         {
             ShuffleDeck(MonsterDeck, MonsterDiscard);
@@ -256,33 +297,54 @@ public class BoardGameManager : MonoBehaviour
     }
     public void EndTurn()
     {
-        
+        Debug.Log("ending turn");
         CancelAttack();
-        if (playerturn == 1)
-        {
-            playerturn = 2;
-            for (int i = player2.cardsHand.Count; i < player2.hordepoints; i++)
-            {
-                DrawCards(player2);
-            }
-        }
-        else if (playerturn == 2)
-        {
-            playerturn = 1;
-            for (int i = player1.cardsHand.Count; i < player1.hordepoints; i++)
-            {
-                DrawCards(player1);
-            }
-        }
+        
+     
         atkbutton.gameObject.SetActive(false);
         cnclbutton.gameObject.SetActive(false);
-        Debug.Log("End turn");
+       
         activelocation = null;
         defendinglocation = null;
         RefreshPlayerUI();
-       
+        cantriggerdeadzone = true;
+        cantriggermortton = true;
+        Debug.Log(player1.cardsHand.Count);
+        Debug.Log(player2.cardsHand.Count);
+
+        startturnbuttons.gameObject.SetActive(true);
     }
     
+    public void StartTurn()
+    {
+        startturnbuttons.SetActive(false);
+        if (playerturn == 1)
+        {
+            Debug.Log("Now player 2s turn");
+            Debug.Log(player2.cardsHand.Count);
+            if (player2.cardsHand.Count < player2.hordepoints)
+            {
+                Debug.Log("drawing player 2");
+                Debug.Log(player2.hordepoints);
+                DrawCards(player2);
+            }
+            playerturn = 2;
+        }
+        else
+        {
+
+            Debug.Log("Now player 1s turn");
+            Debug.Log(player1.cardsHand.Count);
+            if (player1.cardsHand.Count < player1.hordepoints)
+            {
+                Debug.Log("drawing player 1");
+                Debug.Log(player1.hordepoints);
+                DrawCards(player1);
+                playerturn = 1;
+            }
+        }
+        RefreshPlayerUI();
+    }
     public void LoadVictoryScreen()
     {
         SceneManager.LoadScene("Victory");
@@ -345,9 +407,37 @@ public class BoardGameManager : MonoBehaviour
     {
         for (int i = player.cardsHand.Count; i < player.hordepoints; i++)
         {
-            player.cardsHand.Add(MonsterDeck[0]);
-            MonsterDeck.RemoveAt(0);
+           
+            player.cardsHand.Add(MonsterDeck[MonsterDeck.Count - 1]);
+            MonsterDeck.RemoveAt(MonsterDeck.Count-1);
         }
+    }
+    void DrawOneCard(Player player)
+    {
+        player.cardsHand.Add(MonsterDeck[MonsterDeck.Count - 1]);
+        MonsterDeck.RemoveAt(MonsterDeck.Count - 1);
+    }
+    void DiscardOneCard(Player player)
+    {
+        int randomnum = Random.Range(0, player.cardsHand.Count);
+        if (cantriggerdeadzone)//discard and trigger dead zone
+        {
+            Debug.Log("Added sacrificed card to deadzone");
+            //add card to deadzone owners hand
+            Deadzone.Owner.cardsHand.Add(player.cardsHand[randomnum]);
+             //remove card from current players hand
+              player.cardsHand.RemoveAt(randomnum);
+
+            
+            cantriggerdeadzone = false;
+        }
+        else //regular discard
+        {
+            Debug.Log("regular discard");
+            MonsterDiscard.Add(player.cardsHand[randomnum]);
+            player.cardsHand.RemoveAt(randomnum);
+        }
+       
     }
 
 

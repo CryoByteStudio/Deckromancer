@@ -489,7 +489,7 @@ public class CombatManager : MonoBehaviour
         is_card_selected = true;
     }
 
-    void ReturnHandsToPLayer()
+    public void ReturnHandsToPLayer()
     {
         gman.player1.cardsHand.RemoveRange(0, gman.player1.cardsHand.Count);
         for(int i = 0; i < p1_stack_left.Count; i++)
