@@ -22,10 +22,8 @@ public class CombatManager : MonoBehaviour
 
     public List<CardMaterials> p1_cards = new List<CardMaterials>();
     public List<CardMaterials> p2_cards = new List<CardMaterials>();
-    [SerializeField]
-    CardMaterials attacker;
-    [SerializeField]
-    CardMaterials defender;
+    public CardMaterials attacker;
+    public CardMaterials defender;
     [SerializeField]
     Canvas p1_hand_canvas;
     [SerializeField]
@@ -54,6 +52,10 @@ public class CombatManager : MonoBehaviour
     Text atk_health;
     [SerializeField]
     Text def_health;
+    [SerializeField]
+    Text atk_damage;
+    [SerializeField]
+    Text def_damage;
     [SerializeField]
     Button p1_atk_but;
     [SerializeField]
@@ -158,7 +160,9 @@ public class CombatManager : MonoBehaviour
         }
         if (is_declare_horde && is_p1_atk && is_p2_atk)
         {
-        DisplayP1Hand();
+            atk_damage.text = "0";
+            def_damage.text = "0";
+            DisplayP1Hand();
         DisplayP2Hand();
             if (!attacker)
             {
@@ -277,6 +281,7 @@ public class CombatManager : MonoBehaviour
             }
             else
             {
+                    combat_timer = 0;
                 if (attacker.cur_health > 0 && defender.cur_health > 0)
                 {
                     Debug.Log("attacker health is" + attacker.cur_health);
@@ -288,7 +293,6 @@ public class CombatManager : MonoBehaviour
                     Debug.Log("defender health is" + defender.cur_health);
                     atk_health.text = attacker.cur_health.ToString();
                     def_health.text = defender.cur_health.ToString();
-                    combat_timer = 0;
                 }
                 else if (attacker.cur_health <= 0 && defender.cur_health > 0)
                 {
@@ -338,6 +342,7 @@ public class CombatManager : MonoBehaviour
             {
                 if (is_defender_win)
                 {
+                    combat_timer = 0;
                     //defender win
                     is_p1_atk = false;
                     is_p2_atk = false;
@@ -379,6 +384,7 @@ public class CombatManager : MonoBehaviour
                 }
                 else
                 {
+                    combat_timer = 0;
                     //attacker win
                     is_p1_atk = false;
                     is_p2_atk = false;
@@ -424,10 +430,12 @@ public class CombatManager : MonoBehaviour
 
     void Fight()
     {
-
-        defender.cur_health -= DealDamage(attacker.die_dmg) + attacker.add_dmg;
-        attacker.cur_health -= DealDamage(defender.die_dmg) + defender.add_dmg;
-        
+        int def_dmg = DealDamage(defender.die_dmg);
+        int atk_dmg = DealDamage(attacker.die_dmg);
+        defender.cur_health -= atk_dmg + attacker.add_dmg;
+        attacker.cur_health -= def_dmg + defender.add_dmg;
+        atk_damage.text = (atk_dmg + attacker.add_dmg).ToString();
+        def_damage.text = (def_dmg + defender.add_dmg).ToString();
     }
 
     int DealDamage(CardMaterials.Die_Type die_Type)
@@ -536,7 +544,7 @@ public class CombatManager : MonoBehaviour
         }
         else
         {
-            p1_card_images_arr[2].enabled = false;
+            p1_card_images_arr[0].enabled = false;
         }
         if (p1_stack_mid)
             p1_card_images_arr[1].sprite = p1_stack_mid.front_sprite;
